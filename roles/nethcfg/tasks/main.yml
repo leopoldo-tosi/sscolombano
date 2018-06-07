@@ -1,0 +1,57 @@
+---
+# Configuring NethServer as requested
+
+# Network interfaces
+- include: network.yml
+  become: yes
+  tags:
+    - network
+
+# Configuring base parameters
+- include: base.yml
+  become: yes
+  tags:
+    - base
+
+- include: ntp.yml
+  become: yes
+  tags:
+    - ntp
+
+# Directory and organization
+- include: directory.yml
+  become: yes
+  tags:
+    - directory
+
+# DHCP and DNS 
+- include: dhcpdns.yml
+  become: yes
+  tags:
+    - dhcpdns
+
+# Other small services
+- include: otherservices.yml
+  become: yes
+  tags:
+    - otherservices
+
+# Proxy and web filter
+- include: proxy.yml
+  become: yes
+  tags:
+    - proxy
+    - webfilter
+
+# SAMBA and ibays
+- include: samba.yml
+  become: yes
+  tags:
+    - samba
+    - ibay
+
+# Domain groups
+- include: domain_groups.yml
+  become: yes
+  tags:
+    - domaingroups

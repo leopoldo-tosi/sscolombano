@@ -1,0 +1,10 @@
+---
+- name: Installazione istruzioni per repo.bglug.it
+  copy:
+    src: bglug.repo
+    dest: /etc/yum.repos.d/bglug.repo
+  become: yes
+
+- name: Ricalcolo repository disponibili
+  shell: yum repolist
+  become: yes

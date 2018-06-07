@@ -1,0 +1,4 @@
+---
+
+ansible_ssh_user: root
+admin_sshkey: "{{ lookup('env', 'HOME') + '/.ssh/id_rsa.pub' }}"

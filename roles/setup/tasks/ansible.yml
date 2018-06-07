@@ -1,0 +1,41 @@
+---
+
+- name: Verifica installazione git 
+  yum: name=git state=present
+  become: yes
+  tags: git
+
+- name: Verifica installazione ansible 
+  yum: name=ansible state=present
+  become: yes
+  tags: ansible
+
+- name: Checking for python-argparse
+  shell: rpm -q python-argparse
+  become: yes
+  register: check_argparse
+  ignore_errors: yes
+  changed_when: "check_argparse.rc == 1"
+  tags: ansible
+
+- name: Installazione python-argparse
+  yum:
+    name: python-argparse
+    state: present
+  become: yes
+  when: check_argparse|changed
+  tags: ansible
+
+  #- name: Download della gestione client con ansible
+  #  git:
+  #    repo: "https://github.com/bglug-it/ps-clientmgmt.git"
+  #    dest: /home/amgmt/clientmgmt
+  #  tags:
+  #    - git
+  #    - ansible
+  #
+  #- name: Attivo sotto modulo ansdyninv
+  #  shell: cd /home/amgmt/clientmgmt/ansdyninv; git submodule init && git submodule update
+  #  tags:
+  #    - git
+  #    - ansible

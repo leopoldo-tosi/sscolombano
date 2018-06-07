@@ -1,0 +1,52 @@
+---
+# Installing and configuring DHCP and DNS
+
+- name: Installing DHCP and DNS related NethServer packages.
+  yum:
+    name: nethserver-dnsmasq
+    state: present
+
+# DHCP
+
+- name: Checking DHCP configuration
+  shell: /sbin/e-smith/db dhcp getprop {{ intnic }} DhcpRangeStart
+  ignore_errors: true
+  register: chk_dhcp
+
+- name: Configuring DHCP
+  shell: /sbin/e-smith/db dhcp set {{ intnic }} range DhcpRangeStart {{ ansible_local.domain.dhcprange_start }} DhcpRangeEnd {{ ansible_local.domain.dhcprange_end }} status enabled
+  when: chk_dhcp|failed
+
+- name: Activating DHCP
+  shell: /sbin/e-smith/signal-event nethserver-dnsmasq-save
+  when: chk_dhcp|failed
+
+# DNS
+# Already preconfigured before (roles/nethcfg/tasks/base.yml)
+# reforcing the resolver addresses to the ones configured
+
+- name: Checking DNS configuration
+  shell: /sbin/e-smith/db configuration printprop dns NameServers
+  register: chk_dns
+  changed_when: "'NameServers={{ ansible_local.domain.extdnsserver1 }}' not in chk_dns.stdout"
+  tags: force-resolvers
+
+- name: Configuring DNS resolution
+  shell: /sbin/e-smith/db configuration setprop dns NameServers {{ ansible_local.domain.extdnsserver1 }},{{ ansible_local.domain.extdnsserver2 }}
+  when: chk_dns|changed
+  tags: force-resolvers
+
+- name: Activating correct DNS resolution
+  shell: "/sbin/e-smith/signal-event nethserver-{{ item }}-update"
+  with_items:
+    - base
+    - dnsmasq
+  when: chk_dns|changed
+  tags: force-resolvers
+
+# Avahi
+
+- name: Installing avahi-daemon
+  yum:
+    name: nethserver-avahi
+    state: present

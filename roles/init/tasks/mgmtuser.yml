@@ -1,0 +1,23 @@
+---
+- name: Creazione account di gestione Ansible
+  user:
+    name: amgmt
+    comment: "Ansible Management User"
+    group: wheel
+    state: present
+    password: $6$mVKMBMbAxeql$eqSe8tu2qKjtwmpiFy07b6nv2g4F80N.U9EzOmQTrNZwKZ61n6NLrSEQHQo1FOlQghOiB8as6Z35oTUUKN8y2.
+
+- name: Concessione diritti all'utente di gestione Ansible
+  template:
+    src: sudoers.d
+    dest: /etc/sudoers.d/amgmt
+    owner: root
+    group: root
+    mode: 0440
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: Installazione chiave privata PC locale
+  authorized_key:
+    user: amgmt
+    key: "{{ lookup('file', admin_sshkey) }}"
+    state: present

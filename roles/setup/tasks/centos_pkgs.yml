@@ -1,0 +1,46 @@
+---
+
+- name: Verifica abilitazione repo Extra
+  shell: yum repolist
+  register: check_epel
+  failed_when: "'Extra Packages for Enterprise Linux 6' not in check_epel.stdout"
+  ignore_errors: yes
+
+- name: Installo epel-release
+  yum: name=epel-release state=present
+  become: yes
+  when: check_epel|failed
+  register: epel_installed
+  ignore_errors: yes
+
+- name: Installo epel-release da URL
+  yum:
+    name: "http://dl.fedoraproject.org/pub/epel/6/{{ ansible_architecture }}/epel-release-6-8.noarch.rpm"
+    state: present
+  become: yes
+  when: epel_installed|failed
+  register: rpm_epel_installed
+
+- name: Abilito il repo EPEL
+  shell: yum-config-manager --enable epel
+  become: yes
+  when: epel_installed|changed or epel_installed|success or rpm_epel_installed|changed
+  changed_when: "'[epel]' in epel_enabled.stdout and epel_enabled.rc == 0"
+  register: epel_enabled
+
+- name: Pulizia e ricaricam. repo
+  shell: yum clean all && yum repolist
+  become: yes
+  when: epel_enabled|changed
+  tags: repo
+
+- name: Aggiorno il sistema
+  yum: name=* state=latest
+  become: yes
+  tags: upgrade
+
+- name: Installo pacchetti addizionali
+  yum: name='{{ item }}' state=present
+  become: yes
+  with_items: '{{ addin_pkgs }}'
+  tags: pkg

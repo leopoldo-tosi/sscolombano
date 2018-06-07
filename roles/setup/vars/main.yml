@@ -1,0 +1,7 @@
+---
+addin_pkgs:
+  - git
+  - vim-enhanced
+  - screen
+  - sshpass
+  - ansible

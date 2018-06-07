@@ -1,0 +1,19 @@
+---
+
+- include: mirror-cfg.yml
+  tags:
+    - preseed
+    - repoconfig
+
+- include: preseed.yml
+  tags:
+    - preseed
+
+- include: repoconfig.yml
+  tags:
+    - preseed
+    - repoconfig
+
+- include: firefoxcert.yml
+  tags:
+    - firefox

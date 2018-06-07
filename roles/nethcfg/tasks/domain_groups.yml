@@ -1,0 +1,47 @@
+---
+# Domain groups
+
+# Domain Users
+
+- name: domusers - Checking for group
+  shell: /sbin/e-smith/db accounts show domusers
+  register: check_domusers
+  ignore_errors: true
+
+- name: domusers - Creating new group
+  shell: /sbin/e-smith/db accounts set domusers group Description "Domain Users" Members admin Removable no
+  when: check_domusers|failed
+
+- name: domusers - Activating group
+  shell: /sbin/e-smith/signal-event group-create domusers
+  when: check_domusers|failed
+
+# Domain Operators
+
+- name: domopers - Checking for group
+  shell: /sbin/e-smith/db accounts show domopers
+  register: check_domopers
+  ignore_errors: true
+
+- name: domopers - Creating new group
+  shell: /sbin/e-smith/db accounts set domopers group Description "Domain Operators" Removable no
+  when: check_domopers|failed
+
+- name: domopers - Activating group
+  shell: /sbin/e-smith/signal-event group-create domopers
+  when: check_domopers|failed
+
+# Docenti
+
+- name: docenti - Checking for group
+  shell: /sbin/e-smith/db accounts show docenti
+  register: check_docenti
+  ignore_errors: true
+
+- name: docenti - Creating new group
+  shell: /sbin/e-smith/db accounts set docenti group Description "Docenti" Removable no
+  when: check_docenti|failed
+
+- name: docenti - Activating group
+  shell: /sbin/e-smith/signal-event group-create docenti
+  when: check_docenti|failed

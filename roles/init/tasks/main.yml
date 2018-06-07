@@ -1,0 +1,11 @@
+---
+# Task basilari per la prima configurazione
+- include: selinux-binding.yml
+  when: ansible_os_family == "RedHat"
+
+- include: yum-utils.yml
+
+- include: mgmtuser.yml
+
+- include: domaininfo.yml
+  tags: domaininfo

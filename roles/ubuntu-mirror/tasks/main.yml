@@ -1,0 +1,25 @@
+---
+
+- include: mirror-cfg.yml
+  tags:
+    - mirror
+
+- include: local-mirror.yml
+  when: ansible_local.domain.mirror_mode == 'local'
+  tags:
+    - mirror
+    - local-mirror
+
+- include: nfs-mirror.yml
+  when: ansible_local.domain.mirror_mode == 'nfs'
+  become: yes
+  tags:
+    - mirror
+    - nfs-mirror
+
+- include: remote-mirror.yml
+  when: ansible_local.domain.mirror_mode == 'remote'
+  become: yes
+  tags:
+    - mirror
+    - remote-mirror

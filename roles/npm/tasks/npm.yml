@@ -1,0 +1,8 @@
+---
+# Anche in questo caso, avendo preparato il repo, l'ultima versione viene installata da repo
+
+- name: Installazione networkpackagemanager
+  yum:
+    pkg: nethserver-networkpackagemanager
+    state: latest
+  become: yes

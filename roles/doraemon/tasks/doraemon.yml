@@ -1,0 +1,15 @@
+---
+# Installa e configura il servizio per rinominare il client
+# Grazie per il servizio a Enrico Bacis
+
+# Considerando di aver creato il repo, viene comunque installata l'ultima versione disponibile
+
+- name: Installazione doraemon
+  yum:
+    pkg: "{{ doraemon_pkg }}"
+    state: latest
+  become: yes
+
+- name: Verifico avvio di doraemon
+  service: name=doraemon state=restarted
+  become: yes

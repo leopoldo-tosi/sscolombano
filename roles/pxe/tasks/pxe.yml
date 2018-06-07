@@ -1,0 +1,79 @@
+---
+# Configuring other aspects for PXE
+
+- name: Creating mandatory directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /var/lib/tftpboot/pxelinux.cfg
+    - /var/lib/tftpboot/ubuntu/14.04/i386
+    - /var/lib/tftpboot/ubuntu/14.04/amd64
+    - /var/lib/tftpboot/utils/memtest86
+
+- name: pxelinux.0
+  get_url:
+    url: "http://archive.ubuntu.com/ubuntu/dists/trusty-updates/main/installer-amd64/current/images/utopic-netboot/pxelinux.0"
+    dest: /var/lib/tftpboot/pxelinux.0
+
+- name: pxelinux.cfg/default
+  template:
+    src: pxelinux.cfg/default
+    dest: /var/lib/tftpboot/pxelinux.cfg/default
+  when: development is not defined or development|bool == false
+
+- name: pxelinux.cfg/default - development
+  template:
+    src: pxelinux.cfg/default.dev
+    dest: /var/lib/tftpboot/pxelinux.cfg/default
+  when: development is defined and development|bool
+
+- name: bglug.png
+  copy:
+    src: bglug.png
+    dest: /var/lib/tftpboot/utils/bglug.png
+
+- name: vesamenu.c32
+  get_url:
+    url: "http://archive.ubuntu.com/ubuntu/dists/trusty-updates/main/installer-i386/current/images/netboot/ubuntu-installer/i386/boot-screens/vesamenu.c32"
+    dest: /var/lib/tftpboot/utils/vesamenu.c32
+
+- name: chain.c32
+  get_url:
+    url: "http://repo.bglug.it/pxelinux/chain.c32"
+    dest: /var/lib/tftpboot/utils/chain.c32
+
+- name: linux i386 
+  get_url:
+    url: "http://archive.ubuntu.com/ubuntu/dists/trusty-updates/main/installer-i386/current/images/netboot/ubuntu-installer/i386/linux"
+    dest: /var/lib/tftpboot/ubuntu/14.04/i386/linux
+
+- name: initrd.gz i386
+  get_url:
+    url: "http://archive.ubuntu.com/ubuntu/dists/trusty-updates/main/installer-i386/current/images/netboot/ubuntu-installer/i386/initrd.gz"
+    dest: /var/lib/tftpboot/ubuntu/14.04/i386/initrd.gz
+
+- name: linux amd64
+  get_url:
+    url: "http://archive.ubuntu.com/ubuntu/dists/trusty-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/linux"
+    dest: /var/lib/tftpboot/ubuntu/14.04/amd64/linux
+
+- name: initrd.gz amd64
+  get_url:
+    url: "http://archive.ubuntu.com/ubuntu/dists/trusty-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/initrd.gz"
+    dest: /var/lib/tftpboot/ubuntu/14.04/amd64/initrd.gz
+
+- name: memdisk
+  get_url:
+    url: "http://repo.bglug.it/pxelinux/memdisk"
+    dest: /var/lib/tftpboot/utils/memdisk
+
+- name: memtest86
+  get_url:
+    url: "http://repo.bglug.it/pxelinux/memtest86/vmlinuz"
+    dest: /var/lib/tftpboot/utils/memtest86/vmlinuz
+
+- name: hdt
+  get_url:
+    url: "http://repo.bglug.it/pxelinux/hdt.img"
+    dest: /var/lib/tftpboot/utils/hdt.img
